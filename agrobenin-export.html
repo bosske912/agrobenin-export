@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgroBénin Export — Négoce de Produits Agricoles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --terre:   #8B4513;
+      --or:      #C8923A;
+      --or-clair:#F0C97A;
+      --vert:    #2D5016;
+      --vert-m:  #4A7C2F;
+      --creme:   #FAF6EE;
+      --brun:    #3B1F0A;
+      --gris:    #6B6B6B;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--creme);
+      color: var(--brun);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(43,14,4,0.96);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.2rem; height: 56px;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; color: var(--or-clair); letter-spacing: 0.03em;
+    }
+    .nav-links { display: flex; gap: 1.4rem; list-style: none; }
+    .nav-links a {
+      color: #ccc; text-decoration: none; font-size: 0.82rem;
+      font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--or-clair); }
+
+    /* HERO */
+    .hero {
+      min-height: 100svh;
+      background: linear-gradient(160deg, var(--brun) 0%, #1a3a08 60%, var(--vert) 100%);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 7rem 1.4rem 3rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--or); font-weight: 600; margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      color: #fff; line-height: 1.1; margin-bottom: 1.4rem;
+    }
+    .hero h1 span { color: var(--or-clair); }
+    .hero-sub {
+      color: rgba(255,255,255,0.72); font-size: 1rem;
+      max-width: 420px; margin-bottom: 2.2rem;
+    }
+    .hero-ctas { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--or); color: var(--brun);
+      padding: 0.75rem 1.6rem; border-radius: 4px;
+      font-weight: 700; font-size: 0.9rem; text-decoration: none;
+      letter-spacing: 0.02em; transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--or-clair); }
+    .btn-secondary {
+      border: 1.5px solid rgba(255,255,255,0.35); color: #fff;
+      padding: 0.75rem 1.6rem; border-radius: 4px;
+      font-weight: 500; font-size: 0.9rem; text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--or-clair); }
+
+    .hero-stats {
+      display: flex; gap: 2rem; margin-top: 3rem;
+      padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; color: var(--or-clair); font-weight: 900;
+    }
+    .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    /* SECTIONS */
+    section { padding: 4rem 1.4rem; }
+    .section-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--or); font-weight: 600; margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      color: var(--brun); line-height: 1.2; margin-bottom: 1rem;
+    }
+    .section-desc { color: var(--gris); max-width: 480px; margin-bottom: 2.4rem; }
+
+    /* PRODUITS */
+    #produits { background: #fff; }
+    .produits-grid { display: grid; gap: 1rem; }
+    .produit-card {
+      border: 1px solid #e8ddd0;
+      border-radius: 8px; overflow: hidden;
+      background: var(--creme);
+    }
+    .produit-img {
+      height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+    .cajou-bg   { background: linear-gradient(135deg, #f5e6d0, #e8c99a); }
+    .soja-bg    { background: linear-gradient(135deg, #e8f0d8, #c8d89a); }
+    .mais-bg    { background: linear-gradient(135deg, #fff3c0, #f5d060); }
+    .coton-bg   { background: linear-gradient(135deg, #f0f0f0, #d8e8f0); }
+
+    .produit-info { padding: 1rem; }
+    .produit-nom {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem;
+    }
+    .produit-desc { font-size: 0.82rem; color: var(--gris); margin-bottom: 0.6rem; }
+    .produit-tag {
+      display: inline-block;
+      background: var(--vert-m); color: #fff;
+      font-size: 0.68rem; padding: 0.2rem 0.6rem;
+      border-radius: 20px; font-weight: 600; letter-spacing: 0.04em;
+    }
+
+    /* SERVICES */
+    #services { background: var(--creme); }
+    .services-list { display: flex; flex-direction: column; gap: 1rem; }
+    .service-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1.2rem; background: #fff;
+      border-radius: 8px; border-left: 3px solid var(--or);
+    }
+    .service-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .service-title { font-weight: 700; margin-bottom: 0.25rem; font-size: 0.95rem; }
+    .service-text { font-size: 0.82rem; color: var(--gris); }
+
+    /* POURQUOI */
+    #pourquoi {
+      background: linear-gradient(135deg, var(--brun), var(--vert));
+      color: #fff;
+    }
+    #pourquoi .section-title { color: #fff; }
+    #pourquoi .section-desc { color: rgba(255,255,255,0.7); }
+    .raisons { display: flex; flex-direction: column; gap: 1rem; }
+    .raison {
+      display: flex; gap: 1rem; align-items: center;
+      padding: 1rem; background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+    .raison-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; color: var(--or-clair);
+      font-weight: 900; min-width: 2rem;
+    }
+    .raison-text { font-size: 0.88rem; color: rgba(255,255,255,0.85); }
+    .raison-title { font-weight: 600; margin-bottom: 0.2rem; }
+
+    /* CONTACT */
+    #contact { background: #fff; }
+    .contact-box {
+      background: var(--creme); border-radius: 12px;
+      padding: 2rem 1.4rem; border: 1px solid #e8ddd0;
+    }
+    .contact-info { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.8rem; }
+    .contact-row { display: flex; gap: 0.8rem; align-items: center; }
+    .contact-icon { font-size: 1.2rem; }
+    .contact-label { font-size: 0.72rem; color: var(--gris); text-transform: uppercase; letter-spacing: 0.08em; }
+    .contact-val { font-weight: 600; font-size: 0.9rem; }
+
+    .btn-whatsapp {
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      background: #25D366; color: #fff;
+      padding: 1rem; border-radius: 8px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-whatsapp:hover { background: #1db954; }
+
+    /* FOOTER */
+    footer {
+      background: var(--brun); color: rgba(255,255,255,0.5);
+      text-align: center; padding: 1.4rem;
+      font-size: 0.78rem;
+    }
+    footer span { color: var(--or-clair); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AgroBénin Export</div>
+  <ul class="nav-links">
+    <li><a href="#produits">Produits</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">🌍 Bénin — Afrique de l'Ouest</p>
+  <h1>Le négoce agricole<br/>au service de <span>votre croissance</span></h1>
+  <p class="hero-sub">Exportation de produits agricoles de qualité depuis le Bénin vers les marchés internationaux. Cajou, soja, maïs et coton.</p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-primary">Demander un devis</a>
+    <a href="#produits" class="btn-secondary">Nos produits</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-val">10+</div>
+      <div class="stat-label">Années d'expérience</div>
+    </div>
+    <div>
+      <div class="stat-val">500T</div>
+      <div class="stat-label">Exportées / an</div>
+    </div>
+    <div>
+      <div class="stat-val">15+</div>
+      <div class="stat-label">Partenaires actifs</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUITS -->
+<section id="produits">
+  <p class="section-eyebrow">Ce que nous commercialisons</p>
+  <h2 class="section-title">Nos produits phares</h2>
+  <p class="section-desc">Des matières premières agricoles sélectionnées avec soin, conformes aux standards d'exportation internationaux.</p>
+  <div class="produits-grid">
+    <div class="produit-card">
+      <div class="produit-img cajou-bg">🥜</div>
+      <div class="produit-info">
+        <div class="produit-nom">Noix de Cajou</div>
+        <div class="produit-desc">Cajou brut et transformé, certifié qualité export. Principal produit de la filière béninoise.</div>
+        <span class="produit-tag">Export prioritaire</span>
+      </div>
+    </div>
+    <div class="produit-card">
+      <div class="produit-img soja-bg">🌿</div>
+      <div class="produit-info">
+        <div class="produit-nom">Soja</div>
+        <div class="produit-desc">Graines de soja triées et conditionnées selon les normes phytosanitaires internationales.</div>
+        <span class="produit-tag">Forte demande</span>
+      </div>
+    </div>
+    <div class="produit-card">
+      <div class="produit-img mais-bg">🌽</div>
+      <div class="produit-info">
+        <div class="produit-nom">Maïs</div>
+        <div class="produit-desc">Maïs séché et ensaché en sacs standards. Livraison en vrac ou conditionné selon les besoins.</div>
+        <span class="produit-tag">Disponible</span>
+      </div>
+    </div>
+    <div class="produit-card">
+      <div class="produit-img coton-bg">☁️</div>
+      <div class="produit-info">
+        <div class="produit-nom">Coton</div>
+        <div class="produit-desc">Fibre de coton béninoise, reconnue pour sa qualité sur les marchés asiatiques et européens.</div>
+        <span class="produit-tag">Sur commande</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <p class="section-eyebrow">Ce que nous faisons pour vous</p>
+  <h2 class="section-title">Nos services</h2>
+  <p class="section-desc">De la collecte à la livraison, nous gérons toute la chaîne logistique pour vous.</p>
+  <div class="services-list">
+    <div class="service-item">
+      <div class="service-icon">🚜</div>
+      <div>
+        <div class="service-title">Collecte & Sourcing</div>
+        <div class="service-text">Approvisionnement direct auprès de producteurs locaux vérifiés dans les zones agricoles du Bénin.</div>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-icon">📦</div>
+      <div>
+        <div class="service-title">Conditionnement & Stockage</div>
+        <div class="service-text">Tri, nettoyage, séchage et ensachage dans nos entrepôts conformes aux normes d'hygiène.</div>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-icon">🚢</div>
+      <div>
+        <div class="service-title">Export & Logistique</div>
+        <div class="service-text">Gestion complète des documents d'exportation, dédouanement et transport jusqu'au port de destination.</div>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-icon">🤝</div>
+      <div>
+        <div class="service-title">Conseil & Intermédiation</div>
+        <div class="service-text">Mise en relation entre acheteurs internationaux et producteurs béninois, avec suivi de la transaction.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POURQUOI NOUS -->
+<section id="pourquoi">
+  <p class="section-eyebrow" style="color:var(--or-clair)">Nos engagements</p>
+  <h2 class="section-title">Pourquoi nous choisir ?</h2>
+  <p class="section-desc">Des valeurs claires qui guident chaque transaction que nous réalisons.</p>
+  <div class="raisons">
+    <div class="raison">
+      <div class="raison-num">01</div>
+      <div class="raison-text">
+        <div class="raison-title">Connaissance du terrain</div>
+        Plus de 10 ans dans la filière agricole béninoise — nous connaissons chaque acteur, chaque région de production.
+      </div>
+    </div>
+    <div class="raison">
+      <div class="raison-num">02</div>
+      <div class="raison-text">
+        <div class="raison-title">Transparence totale</div>
+        Prix fixés en amont, traçabilité des lots et communication régulière à chaque étape de la commande.
+      </div>
+    </div>
+    <div class="raison">
+      <div class="raison-num">03</div>
+      <div class="raison-text">
+        <div class="raison-title">Réactivité & fiabilité</div>
+        Délais tenus, documents conformes, interlocuteur unique disponible 6j/7 pour vos demandes urgentes.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-eyebrow">Travaillons ensemble</p>
+  <h2 class="section-title">Contactez-nous</h2>
+  <p class="section-desc">Envoyez-nous votre demande de devis ou posez vos questions. Réponse sous 24h.</p>
+  <div class="contact-box">
+    <div class="contact-info">
+      <div class="contact-row">
+        <span class="contact-icon">📍</span>
+        <div>
+          <div class="contact-label">Adresse</div>
+          <div class="contact-val">Cotonou, Bénin — Quartier Cadjehoun</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📞</span>
+        <div>
+          <div class="contact-label">Téléphone</div>
+          <div class="contact-val">+229 97 00 00 00</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">✉️</span>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-val">contact@agrobenin-export.com</div>
+        </div>
+      </div>
+    </div>
+    <a href="https://wa.me/22997000000?text=Bonjour%2C%20je%20souhaite%20avoir%20un%20devis%20pour%20vos%20produits%20agricoles." class="btn-whatsapp">
+      <span>💬</span> Écrire sur WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <span>AgroBénin Export</span> — Tous droits réservés · Cotonou, Bénin</p>
+</footer>
+
+</body>
+</html>
