@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroBénin Export — Assistant IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --noir: #0A0A0A; --noir-2: #141414; --noir-3: #1E1E1E;
+      --or: #C9A84C; --or-clair: #E8C96A; --or-pale: #2A2210;
+      --blanc: #F5F3EE; --gris: #888; --gris-clair: #333;
+    }
+    body { background: var(--noir); color: var(--blanc); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+    .header { width: 100%; max-width: 520px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .logo-mark { width: 44px; height: 44px; background: linear-gradient(135deg, var(--or), var(--or-clair)); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
+    .header-text h1 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--blanc); line-height: 1; }
+    .header-text p { font-size: 11px; color: var(--or); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+    .status-dot { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--gris); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #4CAF50; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .chat-window { width: 100%; max-width: 520px; background: var(--noir-2); border: 1px solid #2A2A2A; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.6); }
+    .messages { height: 420px; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 2px; }
+    .bubble-wrap { display: flex; gap: 10px; align-items: flex-end; }
+    .bubble-wrap.user { flex-direction: row-reverse; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+    .avatar.bot { background: linear-gradient(135deg, var(--or), var(--or-clair)); color: var(--noir); }
+    .avatar.user-av { background: var(--gris-clair); color: var(--blanc); }
+    .bubble { max-width: 78%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.6; }
+    .bubble.bot { background: var(--noir-3); color: var(--blanc); border-bottom-left-radius: 4px; border: 1px solid #2A2A2A; }
+    .bubble.user { background: linear-gradient(135deg, var(--or), var(--or-clair)); color: var(--noir); font-weight: 500; border-bottom-right-radius: 4px; }
+    .typing { display: flex; gap: 5px; align-items: center; padding: 14px 16px; }
+    .typing span { width: 6px; height: 6px; background: var(--or); border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-5px); opacity: 1; } }
+    .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 16px; }
+    .quick-btn { background: transparent; border: 1px solid var(--or); color: var(--or); padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .quick-btn:hover { background: var(--or-pale); }
+    .input-area { border-top: 1px solid #1E1E1E; padding: 16px 20px; display: flex; gap: 10px; align-items: flex-end; }
+    .input-wrap { flex: 1; background: var(--noir-3); border: 1px solid #2A2A2A; border-radius: 24px; padding: 10px 16px; display: flex; transition: border-color 0.2s; }
+    .input-wrap:focus-within { border-color: var(--or); }
+    .input-wrap textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--blanc); font-family: 'Inter', sans-serif; font-size: 14px; resize: none; max-height: 100px; line-height: 1.5; }
+    .input-wrap textarea::placeholder { color: var(--gris); }
+    .send-btn { width: 42px; height: 42px; background: linear-gradient(135deg, var(--or), var(--or-clair)); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s; }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .footer { margin-top: 14px; text-align: center; font-size: 11px; color: #444; }
+    .footer span { color: var(--or); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-mark">🌱</div>
+    <div class="header-text">
+      <h1>AgroBénin Export</h1>
+      <p>Assistant Commercial IA</p>
+    </div>
+    <div class="status-dot"><div class="dot"></div>En ligne</div>
+  </div>
+  <div class="chat-window">
+    <div class="messages" id="messages"></div>
+    <div class="quick-replies" id="quickReplies">
+      <button class="quick-btn" onclick="sendQuick('Quels produits exportez-vous ?')">Nos produits</button>
+      <button class="quick-btn" onclick="sendQuick('Quels sont vos prix ?')">Tarifs</button>
+      <button class="quick-btn" onclick="sendQuick('Comment passer une commande ?')">Commander</button>
+      <button class="quick-btn" onclick="sendQuick('Quels pays livrez-vous ?')">Livraison</button>
+    </div>
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea id="userInput" placeholder="Posez votre question…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </div>
+  <div class="footer">Propulsé par <span>IA Claude</span> · AgroBénin Export</div>
+
+<script>
+  const SYSTEM_PROMPT = `Tu es l'assistant commercial d'AgroBénin Export, une entreprise spécialisée dans l'exportation de produits agricoles du Bénin et du Togo : noix de cajou, coton, sésame, karité, et autres commodités. Tu réponds en français, avec un ton professionnel et chaleureux.
+
+Informations clés :
+- Produits principaux : noix de cajou brutes et transformées, coton, sésame, beurre de karité
+- Marchés cibles : Europe, Asie, Moyen-Orient
+- Qualité : certifiée, traçabilité complète
+- Paiement : virement international, lettre de crédit (LC)
+- Contact WhatsApp disponible pour devis personnalisés
+- Livraison : FOB Cotonou ou Lomé selon le produit
+
+Règles :
+- Réponds de façon concise (2-4 phrases max)
+- Pour les devis, propose de mettre en relation via WhatsApp
+- Mets en valeur la qualité et la traçabilité des produits
+- Ne révèle jamais que tu es Claude ou que tu utilises l'API Anthropic`;
+
+  let history = [];
+  let loading = false;
+
+  function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 100) + 'px'; }
+  function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+  function sendQuick(t) { document.getElementById('userInput').value = t; sendMessage(); }
+  function scrollBottom() { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; }
+
+  function appendMsg(role, text) {
+    const msgs = document.getElementById('messages');
+    const wrap = document.createElement('div');
+    wrap.className = `bubble-wrap ${role === 'user' ? 'user' : ''}`;
+    const av = document.createElement('div');
+    av.className = `avatar ${role === 'user' ? 'user-av' : 'bot'}`;
+    av.textContent = role === 'user' ? 'V' : '🌱';
+    const bubble = document.createElement('div');
+    bubble.className = `bubble ${role === 'user' ? 'user' : 'bot'}`;
+    bubble.textContent = text;
+    wrap.appendChild(av); wrap.appendChild(bubble);
+    msgs.appendChild(wrap); scrollBottom();
+  }
+
+  function showTyping() {
+    const msgs = document.getElementById('messages');
+    const wrap = document.createElement('div'); wrap.className = 'bubble-wrap'; wrap.id = 'typing';
+    const av = document.createElement('div'); av.className = 'avatar bot'; av.textContent = '🌱';
+    const bubble = document.createElement('div'); bubble.className = 'bubble bot typing';
+    bubble.innerHTML = '<span></span><span></span><span></span>';
+    wrap.appendChild(av); wrap.appendChild(bubble); msgs.appendChild(wrap); scrollBottom();
+  }
+
+  function removeTyping() { const el = document.getElementById('typing'); if (el) el.remove(); }
+
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text || loading) return;
+    document.getElementById('quickReplies').style.display = 'none';
+    loading = true;
+    document.getElementById('sendBtn').disabled = true;
+    input.value = ''; input.style.height = 'auto';
+    appendMsg('user', text);
+    history.push({ role: 'user', content: text });
+    showTyping();
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, system: SYSTEM_PROMPT, messages: history })
+      });
+      const data = await res.json();
+      removeTyping();
+      const reply = data.content?.[0]?.text || "Désolé, une erreur est survenue.";
+      appendMsg('bot', reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (e) {
+      removeTyping();
+      appendMsg('bot', "Connexion impossible. Réessayez.");
+    }
+    loading = false;
+    document.getElementById('sendBtn').disabled = false;
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const welcome = "Bonjour ! 👋 Je suis l'assistant d'AgroBénin Export. Je peux vous renseigner sur nos produits agricoles, nos prix et nos conditions d'exportation. Comment puis-je vous aider ?";
+      appendMsg('bot', welcome);
+      history.push({ role: 'assistant', content: welcome });
+    }, 400);
+  });
+</script>
+</body>
+</html>
